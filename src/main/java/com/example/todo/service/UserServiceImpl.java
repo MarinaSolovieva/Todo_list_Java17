@@ -5,28 +5,19 @@ import com.example.todo.exception_handling.exception.NoSuchUserIdException;
 import com.example.todo.model.dto.UserRequestDto;
 import com.example.todo.model.dto.UserResponseDto;
 import com.example.todo.model.entity.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
-public class UserServiceImpl implements UserService{
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
     @Override
     public UserResponseDto findById(Long id) {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isEmpty()) {
-            throw new NoSuchUserIdException("There is no user with id = " + id);
-        }
-        return convertUserToUserResponseDto(user.get());
+        return convertUserToUserResponseDto(userRepository.findById(id)
+                .orElseThrow(() -> new NoSuchUserIdException("There is no user with id = " + id)));
     }
 
     @Override
