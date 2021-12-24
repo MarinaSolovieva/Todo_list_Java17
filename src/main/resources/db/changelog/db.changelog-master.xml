@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd
+  http://www.liquibase.org/xml/ns/pro
+  http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd">
+    <changeSet  author="Solovieva"  id="changelog-1.0">
+        <createTable schemaName="public"
+                      tableName="users">
+            <column  name="id"  type="bigserial">
+                <constraints primaryKey="true"/>
+            </column>
+            <column  name="name"  type="text"/>
+            <column  name="surname"  type="text"/>
+        </createTable>
+        <createTable  schemaName="public"
+                      tableName="todos">
+            <column  name="id"  type="bigserial">
+                <constraints primaryKey="true"/>
+            </column>
+            <column  name="description"  type="text"/>
+            <column  name="user_id"  type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint  baseColumnNames="user_id"
+                                  baseTableName="todos"
+                                  baseTableSchemaName="public"
+                                  constraintName="fk_id_user"
+                                  onDelete="CASCADE"
+                                  referencedColumnNames="id"
+                                  referencedTableName="users"
+                                  referencedTableSchemaName="public"
+                                  validate="true"/>
+    </changeSet>
+
+    <changeSet  author="solovieva"  id="insert-in-table">
+        <insert  schemaName="public"
+                 tableName="users">
+            <column  name="name"  value="marina"/>
+            <column  name="surname"  value="solovieva"/>
+        </insert>
+        <insert  schemaName="public"
+                 tableName="users">
+            <column  name="name"  value="artsiom"/>
+            <column  name="surname"  value="barkhatau"/>
+        </insert>
+        <insert  schemaName="public"
+                 tableName="users">
+            <column  name="name"  value="diana"/>
+            <column  name="surname"  value="gamaunova"/>
+        </insert>
+        <insert  schemaName="public"
+                 tableName="users">
+            <column  name="name"  value="artem"/>
+            <column  name="surname"  value="kniga"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
