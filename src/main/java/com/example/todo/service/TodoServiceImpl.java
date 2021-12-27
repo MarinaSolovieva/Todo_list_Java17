@@ -3,6 +3,7 @@ package com.example.todo.service;
 import com.example.todo.dao.TodoRepository;
 import com.example.todo.dao.UserRepository;
 import com.example.todo.exception_handling.exception.NoSuchUserIdException;
+import com.example.todo.mapper.TodoMapper;
 import com.example.todo.model.dto.TodoRequestDto;
 import com.example.todo.model.dto.TodoResponseDto;
 import com.example.todo.model.entity.Todo;
@@ -11,13 +12,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
 @Service
 @RequiredArgsConstructor
 public class TodoServiceImpl implements TodoService {
 
     private final TodoRepository todoRepository;
     private final UserRepository userRepository;
+    private final TodoMapper todoMapper;
 
     @Override
     public List<TodoResponseDto> findByUserId(Long id) {
@@ -26,7 +27,7 @@ public class TodoServiceImpl implements TodoService {
         }
         return todoRepository.findByUserId(id)
                 .stream()
-                .map(this::convertTodoToTodoResponseDto)
+                .map(todoMapper::entityToTodoResponseDto)
                 .toList();
     }
 
@@ -37,29 +38,20 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public TodoResponseDto save(TodoRequestDto todoRequestDto) {
-        Todo todo = convertTodoRequestDtoToTodo(todoRequestDto);
+        Todo todo = todoMapper.todoRequestDtoToEntity(todoRequestDto);
         todo.setUser(userRepository.findById(todoRequestDto.userId())
                 .orElseThrow(() -> new NoSuchUserIdException("You cannot save todo for non-existent user with id = "
                         + todoRequestDto.userId())));
-        return convertTodoToTodoResponseDto(todoRepository.save(todo));
+        return todoMapper.entityToTodoResponseDto(todoRepository.save(todo));
     }
 
     @Override
     public TodoResponseDto update(TodoRequestDto todoRequestDto, Long id) {
-        Todo todo = convertTodoRequestDtoToTodo(todoRequestDto);
+        Todo todo = todoMapper.todoRequestDtoToEntity(todoRequestDto);
         todo.setId(id);
         todo.setUser(userRepository.findById(todoRequestDto.userId())
                 .orElseThrow(() -> new NoSuchUserIdException("You cannot update todo for non-existent user with id = "
                         + todoRequestDto.userId())));
-        return convertTodoToTodoResponseDto(todoRepository.save(todo));
-
-    }
-
-    private Todo convertTodoRequestDtoToTodo(TodoRequestDto todoRequestDto) {
-        return new Todo(todoRequestDto.description());
-    }
-
-    private TodoResponseDto convertTodoToTodoResponseDto(Todo todo) {
-        return new TodoResponseDto(todo.getId(), todo.getDescription(), todo.getUser().getId());
+        return todoMapper.entityToTodoResponseDto(todoRepository.save(todo));
     }
 }

@@ -2,6 +2,7 @@ package com.example.todo.service;
 
 import com.example.todo.dao.UserRepository;
 import com.example.todo.exception_handling.exception.NoSuchUserIdException;
+import com.example.todo.mapper.UserMapper;
 import com.example.todo.model.dto.UserRequestDto;
 import com.example.todo.model.dto.UserResponseDto;
 import com.example.todo.model.entity.User;
@@ -13,10 +14,11 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
     public UserResponseDto findById(Long id) {
-        return convertUserToUserResponseDto(userRepository.findById(id)
+        return userMapper.entityToUserResponseDto(userRepository.findById(id)
                 .orElseThrow(() -> new NoSuchUserIdException("There is no user with id = " + id)));
     }
 
@@ -27,22 +29,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto save(UserRequestDto userRequestDto) {
-        User user = userRepository.save(convertUserRequestDtoToUser(userRequestDto));
-        return convertUserToUserResponseDto(user);
+        User user = userRepository.save(userMapper.userRequestDtoToEntity(userRequestDto));
+        return userMapper.entityToUserResponseDto(user);
     }
 
     @Override
     public UserResponseDto update(UserRequestDto userRequestDto, Long id) {
-        User user = convertUserRequestDtoToUser(userRequestDto);
+        User user = userMapper.userRequestDtoToEntity(userRequestDto);
         user.setId(id);
-        return convertUserToUserResponseDto(userRepository.save(user));
-    }
-
-    private UserResponseDto convertUserToUserResponseDto(User user) {
-        return new UserResponseDto(user.getId(), user.getName(), user.getSurname());
-    }
-
-    private User convertUserRequestDtoToUser(UserRequestDto userRequestDto) {
-        return new User(userRequestDto.name(), userRequestDto.surname());
+        return userMapper.entityToUserResponseDto(userRepository.save(user));
     }
 }
