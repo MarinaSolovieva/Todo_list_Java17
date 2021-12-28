@@ -1,0 +1,57 @@
+plugins {
+    id 'org.springframework.boot' version '2.6.1'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    validationApiVersion = '2.0.1.Final'
+    hibernateValidatorVersion = '7.0.0.Final'
+    mapStructVersion = '1.4.2.Final'
+    mapStructProcessorVersion = '1.4.2.Final'
+    apacheCommonsLang3Version = '3.0'
+    apacheCommonsCollections4Version = '4.1'
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    implementation 'org.liquibase:liquibase-core'
+
+    runtimeOnly 'org.postgresql:postgresql'
+
+    compileOnly "javax.validation:validation-api:$validationApiVersion"
+    compileOnly "org.hibernate:hibernate-validator:$hibernateValidatorVersion"
+
+    implementation "org.mapstruct:mapstruct:$mapStructVersion"
+    annotationProcessor "org.mapstruct:mapstruct-processor:$mapStructProcessorVersion"
+
+    implementation "org.apache.commons:commons-lang3:$apacheCommonsLang3Version"
+    implementation "org.apache.commons:commons-collections4:$apacheCommonsCollections4Version"
+}
+
+test {
+    useJUnitPlatform()
+}
