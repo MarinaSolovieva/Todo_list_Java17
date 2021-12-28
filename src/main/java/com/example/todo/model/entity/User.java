@@ -40,12 +40,4 @@ public class User {
         this.name = name;
         this.surname = surname;
     }
-
-    public void addTodoToUser(Todo todo) {
-        if (todos == null) {
-            todos = new ArrayList<>();
-        }
-        todos.add(todo);
-        todo.setUser(this);
-    }
 }

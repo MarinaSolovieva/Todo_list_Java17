@@ -25,7 +25,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public UserResponseDto findUserById(@PathVariable Long id) {
-        return userService.findById(id);
+        return userService.getById(id);
     }
 
     @DeleteMapping("/{id}")

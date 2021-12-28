@@ -17,9 +17,20 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    public UserResponseDto findById(Long id) {
-        return userMapper.entityToUserResponseDto(userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchUserIdException("There is no user with id = " + id)));
+    public UserResponseDto getById(Long id) {
+        var user = userRepository.findById(id)
+                .orElseThrow(() -> new NoSuchUserIdException("There is no user with id = " + id));
+        return userMapper.entityToUserResponseDto(user);
+    }
+
+    public User findUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NoSuchUserIdException("There is no user with id = " + id));
+    }
+
+    @Override
+    public boolean existsByUserId(Long id) {
+        return userRepository.existsById(id);
     }
 
     @Override
