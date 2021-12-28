@@ -23,6 +23,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.entityToUserResponseDto(user);
     }
 
+    @Override
     public User findUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NoSuchUserIdException("There is no user with id = " + id));
