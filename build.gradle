@@ -26,6 +26,8 @@ ext {
     apacheCommonsLang3Version = '3.0'
     apacheCommonsCollections4Version = '4.1'
     checkstyleVersion = '9.1'
+    springCloudVersion = '3.0.4'
+    embeddedPostgresqlVersion = '2.0.10'
 }
 
 apply plugin: 'checkstyle'
@@ -41,7 +43,6 @@ checkstyleTest {
     source ='src/test/java'
 }
 
-
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
@@ -49,6 +50,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation "org.springframework.cloud:spring-cloud-starter-bootstrap:$springCloudVersion"
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
@@ -67,6 +69,9 @@ dependencies {
     implementation "org.apache.commons:commons-collections4:$apacheCommonsCollections4Version"
 
     implementation "com.puppycrawl.tools:checkstyle:$checkstyleVersion"
+
+    testImplementation "com.playtika.testcontainers:embedded-postgresql:$embeddedPostgresqlVersion"
+
 }
 
 test {
