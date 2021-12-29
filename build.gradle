@@ -2,7 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.6.1'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
-}
+ }
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
@@ -25,7 +25,22 @@ ext {
     mapStructProcessorVersion = '1.4.2.Final'
     apacheCommonsLang3Version = '3.0'
     apacheCommonsCollections4Version = '4.1'
+    checkstyleVersion = '9.1'
 }
+
+apply plugin: 'checkstyle'
+checkstyle {
+    toolVersion '9.1'
+    configFile file("config/checkstyle/checkstyle.xml")
+    ignoreFailures = false
+}
+checkstyleMain {
+    source ='src/main/java'
+}
+checkstyleTest {
+    source ='src/test/java'
+}
+
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -50,6 +65,8 @@ dependencies {
 
     implementation "org.apache.commons:commons-lang3:$apacheCommonsLang3Version"
     implementation "org.apache.commons:commons-collections4:$apacheCommonsCollections4Version"
+
+    implementation "com.puppycrawl.tools:checkstyle:$checkstyleVersion"
 }
 
 test {
