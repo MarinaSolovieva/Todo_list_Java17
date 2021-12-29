@@ -32,6 +32,7 @@ apply plugin: 'checkstyle'
 checkstyle {
     toolVersion '9.1'
     configFile file("config/checkstyle/checkstyle.xml")
+    ignoreFailures = false
 }
 checkstyleMain {
     source ='src/main/java'
