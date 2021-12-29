@@ -37,7 +37,7 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public TodoResponseDto save(TodoRequestDto todoRequestDto) {
-             Todo todo = todoMapper.todoRequestDtoToEntity(todoRequestDto);
+        Todo todo = todoMapper.todoRequestDtoToEntity(todoRequestDto);
         todo.setUser(userService.findUserById(todoRequestDto.userId()));
         return todoMapper.entityToTodoResponseDto(todoRepository.save(todo));
     }
