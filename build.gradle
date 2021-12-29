@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.6.1'
+    id 'org.springframework.boot' version '2.5.6'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
  }
@@ -26,6 +26,8 @@ ext {
     apacheCommonsLang3Version = '3.0'
     apacheCommonsCollections4Version = '4.1'
     checkstyleVersion = '9.1'
+    springCloudVersion = '3.0.3'
+    embeddedPostgresqlVersion = '2.0.10'
 }
 
 apply plugin: 'checkstyle'
@@ -41,14 +43,12 @@ checkstyleTest {
     source ='src/test/java'
 }
 
-
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
@@ -67,6 +67,10 @@ dependencies {
     implementation "org.apache.commons:commons-collections4:$apacheCommonsCollections4Version"
 
     implementation "com.puppycrawl.tools:checkstyle:$checkstyleVersion"
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation "org.springframework.cloud:spring-cloud-starter-bootstrap:$springCloudVersion"
+    testImplementation "com.playtika.testcontainers:embedded-postgresql:$embeddedPostgresqlVersion"
 }
 
 test {
