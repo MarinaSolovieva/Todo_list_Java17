@@ -5,8 +5,6 @@ import com.example.todo.exception_handling.exception.NoSuchUserIdException;
 import com.example.todo.mapper.TodoMapper;
 import com.example.todo.model.dto.TodoRequestDto;
 import com.example.todo.model.dto.TodoResponseDto;
-import com.example.todo.model.entity.Todo;
-import com.example.todo.model.entity.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 
 
+import static com.example.todo.Utils.createTodo;
+import static com.example.todo.Utils.createUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -101,22 +101,6 @@ class TodoServiceImplIT {
         TodoRequestDto todoRequestDto = new TodoRequestDto("Feed a cat", 1L);
         doThrow(NoSuchUserIdException.class).when(userService).findUserById(1L);
         assertThrows(NoSuchUserIdException.class, () -> todoService.update(todoRequestDto, 1L));
-    }
-
-    private User createUser(String name, String surname, Long id) {
-        User user = new User();
-        user.setSurname(surname);
-        user.setName(name);
-        user.setId(id);
-        return user;
-    }
-
-    private Todo createTodo(String description, Long id, User user) {
-        Todo todo = new Todo();
-        todo.setDescription(description);
-        todo.setId(id);
-        todo.setUser(user);
-        return todo;
     }
 
     private void setDataForSaveAndUpdate() {

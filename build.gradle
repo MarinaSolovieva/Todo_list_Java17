@@ -48,7 +48,8 @@ def testExcludeList = [
         '**/model/**',
         '**/exception_handling/exception/**',
         '**/exception_handling/UserIncorrectData.class',
-        '**/dao/**'
+        '**/dao/**',
+        '**/mapper/**'
 ]
 
 jacoco {
