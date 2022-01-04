@@ -44,6 +44,13 @@ checkstyleTest {
     source ='src/test/java'
 }
 
+def testExcludeList = [
+        '**/model/**',
+        '**/exception_handling/exception/**',
+        '**/exception_handling/UserIncorrectData.class',
+        '**/dao/**'
+]
+
 jacoco {
     reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
 }
@@ -52,15 +59,24 @@ jacocoTestReport {
     reports {
         xml.required = false
         csv.required = false
-        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+        html.outputLocation = layout.buildDirectory.dir('reports/jacoco/jacocoHtml')
+    }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: testExcludeList)
+        }))
     }
     dependsOn test
 }
 
 jacocoTestCoverageVerification {
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: testExcludeList)
+        }))
+    }
     violationRules {
         rule {
-            element = 'CLASS'
             limit {
                 counter = 'LINE'
                 value = 'COVEREDRATIO'
