@@ -6,16 +6,16 @@ import com.example.todo.mapper.TodoMapper;
 import com.example.todo.mapper.TodoMapperImpl;
 import com.example.todo.model.dto.TodoRequestDto;
 import com.example.todo.model.dto.TodoResponseDto;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.List;
-
 
 import static com.example.todo.Utils.createTodo;
 import static com.example.todo.Utils.createUser;
@@ -28,21 +28,17 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 class TodoServiceImplIT {
 
     @Mock
     private TodoRepository todoRepository;
     @Mock
     private UserService userService;
-    private TodoService todoService;
-
-    @BeforeEach
-    void setUp() {
-        TodoMapper todoMapper = new TodoMapperImpl();
-        todoService = new TodoServiceImpl(todoRepository, userService, todoMapper);
-    }
+    @Spy
+    private final TodoMapper todoMapper = new TodoMapperImpl();
+    @InjectMocks
+    private TodoServiceImpl todoService;
 
     @Test
     void testFindByUserId() {

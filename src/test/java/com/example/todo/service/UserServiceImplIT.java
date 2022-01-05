@@ -7,12 +7,14 @@ import com.example.todo.mapper.UserMapperImpl;
 import com.example.todo.model.dto.UserRequestDto;
 import com.example.todo.model.dto.UserResponseDto;
 import com.example.todo.model.entity.User;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
@@ -28,19 +30,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-@SpringBootTest
-@ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 class UserServiceImplIT {
 
-    private UserService userService;
     @Mock
     private UserRepository userRepository;
-
-    @BeforeEach
-    void setUp() {
-        UserMapper userMapper = new UserMapperImpl();
-        userService = new UserServiceImpl(userRepository, userMapper);
-    }
+    @Spy
+    private final UserMapper userMapper = new UserMapperImpl();
+    @InjectMocks
+    private UserServiceImpl userService;
 
     @Test
     void testGetById() {
