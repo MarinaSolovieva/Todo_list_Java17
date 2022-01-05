@@ -3,12 +3,13 @@ package com.example.todo.service;
 import com.example.todo.dao.TodoRepository;
 import com.example.todo.exception_handling.exception.NoSuchUserIdException;
 import com.example.todo.mapper.TodoMapper;
+import com.example.todo.mapper.TodoMapperImpl;
 import com.example.todo.model.dto.TodoRequestDto;
 import com.example.todo.model.dto.TodoResponseDto;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -31,14 +32,17 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles("test")
 class TodoServiceImplIT {
 
-    @MockBean
+    @Mock
     private TodoRepository todoRepository;
-    @MockBean
+    @Mock
     private UserService userService;
-    @Autowired
-    private TodoMapper mapper;
-    @Autowired
     private TodoService todoService;
+
+    @BeforeEach
+    void setUp() {
+        TodoMapper todoMapper = new TodoMapperImpl();
+        todoService = new TodoServiceImpl(todoRepository, userService, todoMapper);
+    }
 
     @Test
     void testFindByUserId() {
