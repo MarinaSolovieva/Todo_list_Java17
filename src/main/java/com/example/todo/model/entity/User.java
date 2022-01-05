@@ -34,9 +34,4 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Todo> todos;
-
-    public User(String name, String surname) {
-        this.name = name;
-        this.surname = surname;
-    }
 }
