@@ -19,13 +19,12 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import java.util.Arrays;
 
 import static java.util.Objects.requireNonNull;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -56,7 +55,7 @@ class TodoControllerIT {
         mockMvc.perform(get("/todos")
                 .param("userId", "1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", containsInAnyOrder(todoFirst, todoSecond)));
+                .andExpect(content().json(objectMapper.writeValueAsString(Arrays.asList(todoFirst, todoSecond))));
     }
 
     @Test
@@ -124,16 +123,13 @@ class TodoControllerIT {
     })
     void whenUpdateValidTodoThenReturns201AndTodoResponse() throws Exception {
         TodoRequestDto todoRequestDto = new TodoRequestDto("Clean the room", 1L);
-        String actual = mockMvc.perform(put("/todos/{id}", 2L)
+        mockMvc.perform(put("/todos/{id}", 2L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(todoRequestDto)))
                 .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertNotNull(actual);
-        assertEquals(objectMapper.writeValueAsString(new TodoResponseDto(2L, "Clean the room", 1L)), actual);
+                .andExpect(jsonPath("$.id").value("2"))
+                .andExpect(jsonPath("$.description").value("Clean the room"))
+                .andExpect(jsonPath("$.userId").value("1"));
     }
 
     @Test

@@ -2,7 +2,6 @@ package com.example.todo.controller;
 
 import com.example.todo.exception_handling.exception.NoSuchUserIdException;
 import com.example.todo.model.dto.UserRequestDto;
-import com.example.todo.model.dto.UserResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,14 +39,11 @@ class UserControllerIT {
 
     @Test
     void whenGetExistingUserThenReturns200AndUserResponse() throws Exception {
-        String actual = mockMvc.perform(get("/users/{id}", 1L))
+        mockMvc.perform(get("/users/{id}", 1L))
                 .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertNotNull(actual);
-        assertEquals(objectMapper.writeValueAsString(new UserResponseDto(1L, "Marina", "Solovieva")), actual);
+                .andExpect(jsonPath("$.id").value("1"))
+                .andExpect(jsonPath("$.name").value("Marina"))
+                .andExpect(jsonPath("$.surname").value("Solovieva"));
     }
 
     @Test
@@ -90,15 +85,12 @@ class UserControllerIT {
     @Test
     void whenUpdateUserThenReturns200AndUserResponse() throws Exception {
         UserRequestDto userRequestDto = new UserRequestDto("Marina", "Barkhatova");
-        String actual = mockMvc.perform(put("/users/{id}", 1L)
+        mockMvc.perform(put("/users/{id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userRequestDto)))
                 .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        assertNotNull(actual);
-        assertEquals(objectMapper.writeValueAsString(new UserResponseDto(1L, "Marina", "Barkhatova")), actual);
+                .andExpect(jsonPath("$.id").value("1"))
+                .andExpect(jsonPath("$.name").value("Marina"))
+                .andExpect(jsonPath("$.surname").value("Barkhatova"));
     }
 }
