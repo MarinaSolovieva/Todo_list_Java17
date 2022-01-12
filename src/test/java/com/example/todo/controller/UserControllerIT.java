@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Sql("/fill-tables-before.sql")
+@Sql("/fill-users-table-before.sql")
 @Sql(value = {"/clean-tables-after.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class UserControllerIT {
 

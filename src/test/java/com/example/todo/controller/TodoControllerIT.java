@@ -12,6 +12,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
@@ -30,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@Sql("/fill-tables-before.sql")
+@Sql("/fill-users-table-before.sql")
 @Sql(value = {"/clean-tables-after.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class TodoControllerIT {
 
@@ -43,6 +44,10 @@ class TodoControllerIT {
     private ObjectMapper objectMapper;
 
     @Test
+    @SqlGroup({
+            @Sql("/fill-users-table-before.sql"),
+            @Sql("/fill-todos-table-before.sql")
+    })
     void whenGetTodosForExistingUserThenReturns200AndTodoResponse() throws Exception {
         String actual = mockMvc.perform(get("/todos")
                 .param("userId", "1"))
@@ -69,12 +74,20 @@ class TodoControllerIT {
     }
 
     @Test
+    @SqlGroup({
+            @Sql("/fill-users-table-before.sql"),
+            @Sql("/fill-todos-table-before.sql")
+    })
     void whenDeleteExistingTodoThenReturns200() throws Exception {
         mockMvc.perform(delete("/todos/{id}", 1L))
                 .andExpect(status().isOk());
     }
 
     @Test
+    @SqlGroup({
+            @Sql("/fill-users-table-before.sql"),
+            @Sql("/fill-todos-table-before.sql")
+    })
     void whenDeleteNonExistentTodoThenReturns404AndExceptionThrown() throws Exception {
         mockMvc.perform(delete("/todos/{id}", NON_EXISTENT_TODO_ID))
                 .andExpect(status().isNotFound())
@@ -109,6 +122,10 @@ class TodoControllerIT {
     }
 
     @Test
+    @SqlGroup({
+            @Sql("/fill-users-table-before.sql"),
+            @Sql("/fill-todos-table-before.sql")
+    })
     void whenUpdateValidTodoThenReturns201AndTodoResponse() throws Exception {
         TodoRequestDto todoRequestDto = new TodoRequestDto("Clean the room", 1L);
         String actual = mockMvc.perform(put("/todos/{id}", 2L)
