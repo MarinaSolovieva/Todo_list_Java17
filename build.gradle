@@ -97,6 +97,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.jetbrains:annotations:20.1.0'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     compileOnly 'org.projectlombok:lombok'
@@ -117,6 +118,8 @@ dependencies {
 
     implementation "com.puppycrawl.tools:checkstyle:$checkstyleVersion"
 
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation "org.springframework.cloud:spring-cloud-starter-bootstrap:$springCloudVersion"
     testImplementation "com.playtika.testcontainers:embedded-postgresql:$embeddedPostgresqlVersion"
