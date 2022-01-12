@@ -19,6 +19,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import java.util.Arrays;
 
 import static java.util.Objects.requireNonNull;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -49,18 +50,13 @@ class TodoControllerIT {
             @Sql("/fill-todos-table-before.sql")
     })
     void whenGetTodosForExistingUserThenReturns200AndTodoResponse() throws Exception {
-        String actual = mockMvc.perform(get("/todos")
-                .param("userId", "1"))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
-
         TodoResponseDto todoFirst = new TodoResponseDto(1L, "Feed the cat", 1L);
         TodoResponseDto todoSecond = new TodoResponseDto(2L, "Go to the grocery store", 1L);
 
-        assertNotNull(actual);
-        assertEquals(objectMapper.writeValueAsString(Arrays.asList(todoFirst, todoSecond)), actual);
+        mockMvc.perform(get("/todos")
+                .param("userId", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", containsInAnyOrder(todoFirst, todoSecond)));
     }
 
     @Test
