@@ -29,7 +29,7 @@ public class Todo {
     @Column(name = "description")
     private String description;
 
-    @ManyToOne ()
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 }

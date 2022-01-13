@@ -117,6 +117,8 @@ dependencies {
 
     implementation "com.puppycrawl.tools:checkstyle:$checkstyleVersion"
 
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation "org.springframework.cloud:spring-cloud-starter-bootstrap:$springCloudVersion"
     testImplementation "com.playtika.testcontainers:embedded-postgresql:$embeddedPostgresqlVersion"

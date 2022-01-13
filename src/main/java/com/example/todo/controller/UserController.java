@@ -34,6 +34,7 @@ public class UserController {
     }
 
     @PostMapping()
+    @ResponseStatus(value = HttpStatus.CREATED)
     public UserResponseDto saveUser(@RequestBody UserRequestDto userRequestDto) {
         return userService.save(userRequestDto);
     }
