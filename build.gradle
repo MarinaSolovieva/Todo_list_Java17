@@ -28,7 +28,7 @@ ext {
     apacheCommonsCollections4Version = '4.1'
     checkstyleVersion = '9.1'
     springCloudVersion = '3.0.3'
-    embeddedPostgresqlVersion = '2.0.10'
+    testContainersVersion = '2.0.19'
 }
 
 apply plugin: 'checkstyle'
@@ -49,7 +49,8 @@ def testExcludeList = [
         '**/exception_handling/exception/**',
         '**/exception_handling/UserIncorrectData.class',
         '**/dao/**',
-        '**/mapper/**'
+        '**/mapper/**',
+        '**/config/**'
 ]
 
 jacoco {
@@ -121,7 +122,8 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation "org.springframework.cloud:spring-cloud-starter-bootstrap:$springCloudVersion"
-    testImplementation "com.playtika.testcontainers:embedded-postgresql:$embeddedPostgresqlVersion"
+    testImplementation "com.playtika.testcontainers:embedded-postgresql:$testContainersVersion"
+    testImplementation "com.playtika.testcontainers:embedded-redis:$testContainersVersion"
 }
 
 test {

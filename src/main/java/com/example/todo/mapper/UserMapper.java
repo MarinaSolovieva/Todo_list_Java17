@@ -3,6 +3,7 @@ package com.example.todo.mapper;
 import com.example.todo.model.dto.UserRequestDto;
 import com.example.todo.model.dto.UserResponseDto;
 import com.example.todo.model.entity.User;
+import com.example.todo.model.redis.UserRedis;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -15,4 +16,7 @@ public interface UserMapper {
 
     UserResponseDto entityToUserResponseDto(User user);
 
+    UserResponseDto redisEntityToUserResponseDto(UserRedis user);
+
+    UserRedis entityToRedisEntity(User user);
 }

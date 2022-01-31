@@ -7,6 +7,7 @@ import com.example.todo.mapper.UserMapperImpl;
 import com.example.todo.model.dto.UserRequestDto;
 import com.example.todo.model.dto.UserResponseDto;
 import com.example.todo.model.entity.User;
+import com.example.todo.model.redis.UserRedis;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,6 +16,8 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Optional;
 
@@ -35,8 +38,12 @@ class UserServiceImplIT {
 
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private RedisTemplate<String, UserRedis> redisTemplate;
     @Spy
     private final UserMapper userMapper = new UserMapperImpl();
+    @Mock
+    private HashOperations<String, Object, Object> hashOperations;
     @InjectMocks
     private UserServiceImpl userService;
 
@@ -44,15 +51,32 @@ class UserServiceImplIT {
     void testGetById() {
         var user = createUser("Marina", "Solovieva", 1L);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-
+        when(redisTemplate.opsForHash()).thenReturn(hashOperations);
+        when(redisTemplate.opsForHash().hasKey("USER", 1L)).thenReturn(false);
         UserResponseDto actual = userService.getById(1L);
 
         assertNotNull(actual);
         assertEquals(new UserResponseDto(1L, "Marina", "Solovieva"), actual);
+        verify(hashOperations, times(1)).put("USER", 1L, userMapper.entityToRedisEntity(user));
+    }
+
+    @Test
+    void testGetByIdFromRedis() {
+        var user = new UserRedis(1L, "Marina", "Solovieva");
+        when(redisTemplate.opsForHash()).thenReturn(hashOperations);
+        when(redisTemplate.opsForHash().hasKey("USER", 1L)).thenReturn(true);
+        when(redisTemplate.opsForHash().get("USER", 1L)).thenReturn(user);
+
+        UserResponseDto actual = userService.getById(1L);
+        assertNotNull(actual);
+        assertEquals(new UserResponseDto(1L, "Marina", "Solovieva"), actual);
+        verify(hashOperations, times(1)).get("USER",  1L);
     }
 
     @Test
     void testGetByIdWithNoSuchUserIdException() {
+        when(redisTemplate.opsForHash()).thenReturn(hashOperations);
+        when(redisTemplate.opsForHash().hasKey("USER", 1L)).thenReturn(false);
         doThrow(NoSuchUserIdException.class).when(userRepository).findById(1L);
         assertThrows(NoSuchUserIdException.class, () -> userService.getById(1L));
     }
@@ -76,12 +100,25 @@ class UserServiceImplIT {
 
     @Test
     void testDeleteById() {
+        when(redisTemplate.opsForHash()).thenReturn(hashOperations);
+        when(redisTemplate.opsForHash().hasKey("USER", 1L)).thenReturn(false);
         userService.deleteById(1L);
         verify(userRepository, times(1)).deleteById(1L);
     }
 
     @Test
+    void testDeleteByIdFromRedis() {
+        when(redisTemplate.opsForHash()).thenReturn(hashOperations);
+        when(redisTemplate.opsForHash().hasKey("USER", 1L)).thenReturn(true);
+        userService.deleteById(1L);
+        verify(userRepository, times(1)).deleteById(1L);
+        verify(hashOperations, times(1)).delete("USER", 1L);
+    }
+
+    @Test
     void testDeleteByIdWithEmptyResultDataAccessException() {
+        when(redisTemplate.opsForHash()).thenReturn(hashOperations);
+        when(redisTemplate.opsForHash().hasKey("USER", 1L)).thenReturn(false);
         doThrow(EmptyResultDataAccessException.class).when(userRepository).deleteById(1L);
         assertThrows(EmptyResultDataAccessException.class, () -> userService.deleteById(1L));
     }
