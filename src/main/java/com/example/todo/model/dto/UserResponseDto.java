@@ -1,5 +1,11 @@
 package com.example.todo.model.dto;
 
-public record UserResponseDto(Long id, String name, String surname) {
+import lombok.Data;
 
+@Data
+public class UserResponseDto {
+
+    private final Long id;
+    private final String name;
+    private final String surname;
 }

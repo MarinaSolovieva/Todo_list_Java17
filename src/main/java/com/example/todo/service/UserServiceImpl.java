@@ -6,34 +6,25 @@ import com.example.todo.mapper.UserMapper;
 import com.example.todo.model.dto.UserRequestDto;
 import com.example.todo.model.dto.UserResponseDto;
 import com.example.todo.model.entity.User;
-import com.example.todo.model.redis.UserRedis;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
-import static java.lang.Boolean.TRUE;
-
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private static final String USER = "USER";
-
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final RedisTemplate<String, UserRedis> redisTemplate;
 
     @Override
+    @Cacheable(key = "#id", value = "userCache")
     public UserResponseDto getById(Long id) {
-        if (TRUE.equals(redisTemplate.opsForHash().hasKey(USER, id))) {
-            return userMapper.redisEntityToUserResponseDto((UserRedis) redisTemplate.opsForHash().get(USER, id));
-        } else {
-            var user = userRepository.findById(id)
-                    .orElseThrow(() -> new NoSuchUserIdException("There is no user with id = " + id));
-            redisTemplate.opsForHash().put(USER, id, userMapper.entityToRedisEntity(user));
-            return userMapper.entityToUserResponseDto(user);
-        }
+        var user = userRepository.findById(id)
+                .orElseThrow(() -> new NoSuchUserIdException("There is no user with id = " + id));
+        return userMapper.entityToUserResponseDto(user);
     }
 
     @Override
@@ -48,10 +39,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(key = "#id", value = "userCache")
     public void deleteById(Long id) {
-        if (TRUE.equals(redisTemplate.opsForHash().hasKey(USER, id))) {
-            redisTemplate.opsForHash().delete(USER, id);
-        }
         userRepository.deleteById(id);
     }
 
@@ -62,6 +51,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CachePut(key = "#id", value = "userCache")
     public UserResponseDto update(UserRequestDto userRequestDto, Long id) {
         User user = userMapper.userRequestDtoToEntity(userRequestDto);
         user.setId(id);
