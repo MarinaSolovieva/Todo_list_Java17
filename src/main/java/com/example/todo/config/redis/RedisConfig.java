@@ -1,7 +1,6 @@
 package com.example.todo.config.redis;
 
 import com.example.todo.model.dto.UserResponseDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
 import org.springframework.cache.annotation.EnableCaching;
@@ -15,8 +14,6 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 
 import java.time.Duration;
-
-import static java.util.Objects.requireNonNull;
 
 @Configuration
 @EnableCaching
@@ -32,17 +29,13 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer(ObjectMapper objectMapper) {
-        objectMapper = objectMapper.copy();
-        objectMapper = objectMapper.activateDefaultTypingAsProperty(requireNonNull(objectMapper).getPolymorphicTypeValidator(),
-                ObjectMapper.DefaultTyping.NON_FINAL,
-                "@class");
-        ObjectMapper finalObjectMapper = objectMapper;
+    public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
+
         return builder -> builder
                 .withCacheConfiguration("userCache",
                         RedisCacheConfiguration.defaultCacheConfig()
                                 .serializeValuesWith(RedisSerializationContext.SerializationPair
-                                        .fromSerializer(new GenericJackson2JsonRedisSerializer(finalObjectMapper)))
+                                        .fromSerializer(new GenericJackson2JsonRedisSerializer("@class")))
                                 .entryTtl(Duration.ofMinutes(EXPIRATION_TIME))
                                 .disableCachingNullValues());
     }
