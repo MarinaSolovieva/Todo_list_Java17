@@ -49,6 +49,7 @@ class UserServiceImplIT {
 
         assertNotNull(actual);
         assertEquals(new UserResponseDto(1L, "Marina", "Solovieva"), actual);
+        verify(userRepository, times(1)).findById(1L);
     }
 
     @Test
