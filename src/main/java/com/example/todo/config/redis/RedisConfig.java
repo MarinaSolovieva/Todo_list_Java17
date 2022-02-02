@@ -30,7 +30,6 @@ public class RedisConfig {
 
     @Bean
     public RedisCacheManagerBuilderCustomizer redisCacheManagerBuilderCustomizer() {
-
         return builder -> builder
                 .withCacheConfiguration("userCache",
                         RedisCacheConfiguration.defaultCacheConfig()
