@@ -7,6 +7,7 @@ import com.example.todo.model.dto.UserRequestDto;
 import com.example.todo.model.dto.UserResponseDto;
 import com.example.todo.model.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -14,13 +15,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@CacheConfig(cacheNames = "userCache")
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
     @Override
-    @Cacheable(key = "#id", value = "userCache")
+    @Cacheable(key = "#id")
     public UserResponseDto getById(Long id) {
         var user = userRepository.findById(id)
                 .orElseThrow(() -> new NoSuchUserIdException("There is no user with id = " + id));
@@ -39,7 +41,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @CacheEvict(key = "#id", value = "userCache")
+    @CacheEvict(key = "#id")
     public void deleteById(Long id) {
         userRepository.deleteById(id);
     }
@@ -51,7 +53,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @CachePut(key = "#id", value = "userCache")
+    @CachePut(key = "#id")
     public UserResponseDto update(UserRequestDto userRequestDto, Long id) {
         User user = userMapper.userRequestDtoToEntity(userRequestDto);
         user.setId(id);
