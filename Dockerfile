@@ -4,3 +4,4 @@ WORKDIR /opt/app
 COPY ${JAR_FILE} todo.jar
 ENTRYPOINT ["java","-jar","todo.jar"]
 
+
